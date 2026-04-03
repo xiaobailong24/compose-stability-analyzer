@@ -57,6 +57,5 @@ app/.idea/
 google-services.json
 
 # Docs
-CLAUDE.md
 docs/api
 .hotswan/
