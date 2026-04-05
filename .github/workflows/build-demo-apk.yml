@@ -38,6 +38,9 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
+      - name: Publish modules to Maven Local
+        run: ./gradlew publishToMavenLocal -x test -x lint --no-daemon --stacktrace -PRELEASE_SIGNING_ENABLED=false
+
       - name: Build debug APK
         run: |
           ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
