@@ -51,6 +51,7 @@ internal class StabilityMonitorInitializer : ContentProvider() {
     return true
   }
 
+  @Suppress("DEPRECATION")
   private fun isAutoInitDisabled(context: android.content.Context): Boolean {
     return try {
       val appInfo = context.packageManager.getApplicationInfo(
@@ -66,20 +67,20 @@ internal class StabilityMonitorInitializer : ContentProvider() {
 
   override fun query(
     uri: Uri,
-    projection: Array<out String>?,
+    projection: Array<String>?,
     selection: String?,
-    selectionArgs: Array<out String>?,
+    selectionArgs: Array<String>?,
     sortOrder: String?,
   ): Cursor? = null
 
   override fun getType(uri: Uri): String? = null
   override fun insert(uri: Uri, values: ContentValues?): Uri? = null
-  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int = 0
+  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int = 0
   override fun update(
     uri: Uri,
     values: ContentValues?,
     selection: String?,
-    selectionArgs: Array<out String>?,
+    selectionArgs: Array<String>?,
   ): Int = 0
 
   companion object {
