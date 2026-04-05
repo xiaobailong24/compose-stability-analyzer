@@ -65,6 +65,7 @@ import com.skydoves.myapplication.models.StableUser
 import com.skydoves.myapplication.models.UnstableUser
 import com.skydoves.myapplication.models.UserState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
 /**
@@ -184,7 +185,7 @@ private fun CollectionsTab() {
   var counter by remember { mutableIntStateOf(0) }
   val mutableItems = remember { mutableStateListOf("Item A", "Item B", "Item C") }
   var immutableItems by remember {
-    mutableStateOf<ImmutableList<String>>(persistentListOf("Immutable 1", "Immutable 2"))
+    mutableStateOf<PersistentList<String>>(persistentListOf("Immutable 1", "Immutable 2"))
   }
   var listItems by remember { mutableStateOf(listOf("List 1", "List 2")) }
 
