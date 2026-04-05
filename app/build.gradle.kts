@@ -17,7 +17,6 @@ plugins {
   id(libs.plugins.android.application.get().pluginId)
   id(libs.plugins.kotlin.android.get().pluginId)
   id(libs.plugins.compose.compiler.get().pluginId)
-  id(libs.plugins.compose.stability.analyzer.get().pluginId)
 }
 
 android {
