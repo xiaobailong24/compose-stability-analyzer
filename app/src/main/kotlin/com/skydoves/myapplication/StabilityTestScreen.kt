@@ -30,13 +30,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card as M3Card
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -368,7 +367,7 @@ fun TrackedImmutableDataDetail(data: ImmutableData) {
 @TraceRecomposition(tag = "state-toggle")
 @Composable
 fun TrackedToggleDisplay(enabled: Boolean, onToggle: (Boolean) -> Unit) {
-  M3Card(
+  Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)),
   ) {
@@ -391,7 +390,7 @@ fun TrackedToggleDisplay(enabled: Boolean, onToggle: (Boolean) -> Unit) {
 @TraceRecomposition(tag = "state-text-input")
 @Composable
 fun TrackedTextInputDisplay(text: String, onTextChange: (String) -> Unit) {
-  M3Card(
+  Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)),
   ) {
@@ -453,7 +452,7 @@ private fun NestedComposablesTab() {
 @TraceRecomposition(tag = "nested-parent")
 @Composable
 fun TrackedParent(outerValue: Int, innerValue: Int, showChild: Boolean) {
-  M3Card(
+  Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF7C4DFF).copy(alpha = 0.08f)),
   ) {
@@ -599,7 +598,7 @@ fun TrackedListItem(index: Int, tick: Int, isEven: Boolean) {
 
 @Composable
 private fun StabilityCard(label: String, content: String, color: Color) {
-  M3Card(
+  Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
   ) {
@@ -612,7 +611,7 @@ private fun StabilityCard(label: String, content: String, color: Color) {
 
 @Composable
 private fun CollectionCard(label: String, items: List<String>, color: Color) {
-  M3Card(
+  Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
   ) {

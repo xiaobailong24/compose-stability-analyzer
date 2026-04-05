@@ -42,9 +42,24 @@ jobs:
         run: ./gradlew publishToMavenLocal -x test -x lint --no-daemon --stacktrace -PRELEASE_SIGNING_ENABLED=false
 
       - name: Build debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace
+        run: |
+          ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build-output.log
+          retention-days: 7
+
+      - name: Show last 100 lines on failure
+        if: failure()
+        run: tail -100 build-output.log
 
       - name: Upload demo APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: demo-apk

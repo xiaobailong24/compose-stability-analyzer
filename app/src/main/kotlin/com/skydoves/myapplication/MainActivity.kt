@@ -187,7 +187,7 @@ fun ThirdPartyCard(
 }
 
 @Composable
-fun Card(
+fun CustomCard(
   modifier: Modifier = Modifier,
   shape: Shape = CardDefaults.shape,
   colors: CardColors = CardDefaults.cardColors(),
