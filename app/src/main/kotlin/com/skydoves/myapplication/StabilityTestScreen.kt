@@ -218,7 +218,7 @@ private fun CollectionsTab() {
 
       Button(onClick = {
         counter++
-        immutableItems = immutableItems + "Immutable ${immutableItems.size + 1}"
+        immutableItems = immutableItems.add("Immutable ${immutableItems.size + 1}")
       }) { Text("+Immutable") }
 
       Button(onClick = {
