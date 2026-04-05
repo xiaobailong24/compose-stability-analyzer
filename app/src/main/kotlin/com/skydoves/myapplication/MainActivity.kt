@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import com.skydoves.compose.stability.ui.RecompositionMonitorOverlay
 import com.skydoves.myapplication.model.ThirdPartyModel
 import com.skydoves.myapplication.model.ThirdPartyModelStable
 import com.skydoves.myapplication.models.ImmutableData
@@ -67,7 +69,12 @@ class MainActivity : ComponentActivity() {
           modifier = Modifier.fillMaxSize(),
           color = MaterialTheme.colorScheme.background,
         ) {
-          RecompositionTrackingExample()
+          Box(modifier = Modifier.fillMaxSize()) {
+            RecompositionTrackingExample()
+            RecompositionMonitorOverlay(
+              modifier = Modifier.align(Alignment.TopEnd),
+            )
+          }
         }
       }
     }
