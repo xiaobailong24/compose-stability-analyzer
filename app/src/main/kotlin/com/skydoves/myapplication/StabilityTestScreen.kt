@@ -36,7 +36,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.Card as M3Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -67,7 +67,6 @@ import com.skydoves.myapplication.models.UnstableUser
 import com.skydoves.myapplication.models.UserState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
 /**
  * Comprehensive stability test screen exercising many recomposition scenarios.
@@ -186,7 +185,7 @@ private fun CollectionsTab() {
   var counter by remember { mutableIntStateOf(0) }
   val mutableItems = remember { mutableStateListOf("Item A", "Item B", "Item C") }
   var immutableItems by remember {
-    mutableStateOf(persistentListOf("Immutable 1", "Immutable 2"))
+    mutableStateOf<ImmutableList<String>>(persistentListOf("Immutable 1", "Immutable 2"))
   }
   var listItems by remember { mutableStateOf(listOf("List 1", "List 2")) }
 
@@ -220,8 +219,7 @@ private fun CollectionsTab() {
 
       Button(onClick = {
         counter++
-        immutableItems = (immutableItems + "Immutable ${immutableItems.size + 1}")
-          .toImmutableList()
+        immutableItems = immutableItems + "Immutable ${immutableItems.size + 1}"
       }) { Text("+Immutable") }
 
       Button(onClick = {
@@ -370,7 +368,7 @@ fun TrackedImmutableDataDetail(data: ImmutableData) {
 @TraceRecomposition(tag = "state-toggle")
 @Composable
 fun TrackedToggleDisplay(enabled: Boolean, onToggle: (Boolean) -> Unit) {
-  Card(
+  M3Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)),
   ) {
@@ -393,7 +391,7 @@ fun TrackedToggleDisplay(enabled: Boolean, onToggle: (Boolean) -> Unit) {
 @TraceRecomposition(tag = "state-text-input")
 @Composable
 fun TrackedTextInputDisplay(text: String, onTextChange: (String) -> Unit) {
-  Card(
+  M3Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)),
   ) {
@@ -455,7 +453,7 @@ private fun NestedComposablesTab() {
 @TraceRecomposition(tag = "nested-parent")
 @Composable
 fun TrackedParent(outerValue: Int, innerValue: Int, showChild: Boolean) {
-  Card(
+  M3Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF7C4DFF).copy(alpha = 0.08f)),
   ) {
@@ -601,7 +599,7 @@ fun TrackedListItem(index: Int, tick: Int, isEven: Boolean) {
 
 @Composable
 private fun StabilityCard(label: String, content: String, color: Color) {
-  Card(
+  M3Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
   ) {
@@ -614,7 +612,7 @@ private fun StabilityCard(label: String, content: String, color: Color) {
 
 @Composable
 private fun CollectionCard(label: String, items: List<String>, color: Color) {
-  Card(
+  M3Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
   ) {
