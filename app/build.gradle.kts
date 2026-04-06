@@ -60,6 +60,7 @@ android {
 dependencies {
   implementation(project(":app-model"))
   implementation(project(":stability-ui"))
+  implementation(project(":stability-runtime"))
 
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.activity.compose)
