@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v5.0.0
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 21
 
       - name: Cache Gradle and wrapper
         uses: actions/cache@v4
@@ -58,11 +58,13 @@ jobs:
             const log = fs.readFileSync('build-output.log', 'utf8');
             const lines = log.split('\n');
             const errorLines = lines.filter(l =>
-              l.includes('e: ') || l.includes('FAILURE') || l.includes('BUILD FAILED') ||
-              l.includes('error:') || l.includes('Execution failed')
-            );
-            const last50 = lines.slice(-50).join('\n');
-            const body = `### Build Demo APK Failed\n\n**Error lines:**\n\`\`\`\n${errorLines.join('\n')}\n\`\`\`\n\n**Last 50 lines:**\n\`\`\`\n${last50}\n\`\`\``;
+              (l.includes('e: ') || l.includes('FAILURE') || l.includes('BUILD FAILED') ||
+               l.includes('Execution failed') || l.includes('> Could not') ||
+               l.includes('Exception') || l.includes('error:')) &&
+              !l.includes('WARNING: D8:')
+            ).slice(0, 50);
+            const last80 = lines.slice(-80).join('\n');
+            const body = `### Build Demo APK Failed\n\n**Error lines:**\n\`\`\`\n${errorLines.join('\n')}\n\`\`\`\n\n**Last 80 lines:**\n\`\`\`\n${last80}\n\`\`\``;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
