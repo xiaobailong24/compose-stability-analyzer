@@ -119,7 +119,11 @@ class RecompositionMonitorTest {
   @Test
   fun `EventStore chains delegate logger`() {
     val logged = mutableListOf<RecompositionEvent>()
-    RecompositionEventStore.delegate = RecompositionLogger { logged.add(it) }
+    RecompositionEventStore.delegate = object : RecompositionLogger {
+      override fun log(event: RecompositionEvent) {
+        logged.add(event)
+      }
+    }
 
     val event = createEvent("Comp", "", 1)
     RecompositionEventStore.log(event)
