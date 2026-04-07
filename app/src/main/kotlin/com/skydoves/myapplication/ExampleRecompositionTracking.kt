@@ -17,9 +17,12 @@ package com.skydoves.myapplication
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.skydoves.compose.stability.runtime.TraceRecomposition
 import com.skydoves.myapplication.models.StableUser
 import com.skydoves.myapplication.models.UnstableUser
@@ -48,6 +52,29 @@ import com.skydoves.myapplication.models.UnstableUser
  */
 @Composable
 fun RecompositionTrackingExample() {
+  var selectedTab by remember { mutableIntStateOf(0) }
+  val tabs = listOf("Basic", "Stability Tests")
+
+  Column(modifier = Modifier.fillMaxSize()) {
+    TabRow(selectedTabIndex = selectedTab) {
+      tabs.forEachIndexed { index, title ->
+        Tab(
+          selected = selectedTab == index,
+          onClick = { selectedTab = index },
+          text = { Text(title, fontSize = 12.sp) },
+        )
+      }
+    }
+
+    when (selectedTab) {
+      0 -> BasicTrackingTab()
+      1 -> StabilityTestScreen()
+    }
+  }
+}
+
+@Composable
+private fun BasicTrackingTab() {
   var counter by remember { mutableIntStateOf(0) }
   var stableUser by remember { mutableStateOf(StableUser("John", 30)) }
   var unstableUser by remember { mutableStateOf(UnstableUser("Jane", 25)) }

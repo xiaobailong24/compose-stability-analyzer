@@ -14,33 +14,18 @@
  * limitations under the License.
  */
 plugins {
-  id(libs.plugins.android.application.get().pluginId)
+  id(libs.plugins.android.library.get().pluginId)
   id(libs.plugins.kotlin.android.get().pluginId)
   id(libs.plugins.compose.compiler.get().pluginId)
 }
 
 android {
-  namespace = "com.skydoves.myapplication"
+  namespace = "com.skydoves.compose.stability.ui"
   compileSdk = 36
 
   defaultConfig {
-    applicationId = "com.skydoves.myapplication"
-    minSdk = 23
-    targetSdk = 36
-    versionCode = 1
-    versionName = "1.0"
-
-    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-  }
-
-  buildTypes {
-    release {
-      isMinifyEnabled = false
-      proguardFiles(
-        getDefaultProguardFile("proguard-android-optimize.txt"),
-        "proguard-rules.pro"
-      )
-    }
+    minSdk = 21
+    consumerProguardFiles("consumer-rules.pro")
   }
 
   compileOptions {
@@ -53,13 +38,11 @@ android {
   }
 
   lint {
-    disable += "NullSafeMutableLiveData"
+    abortOnError = false
   }
 }
 
 dependencies {
-  implementation(project(":app-model"))
-  implementation(project(":stability-ui"))
   implementation(project(":stability-runtime"))
 
   implementation(platform(libs.androidx.compose.bom))
@@ -68,11 +51,6 @@ dependencies {
   implementation(libs.androidx.compose.material3)
   implementation(libs.androidx.compose.foundation)
   implementation(libs.androidx.compose.runtime)
-  implementation(libs.androidx.compose.ui.tooling.preview)
-  implementation(libs.kotlinx.collections.immutable)
 
-  androidTestImplementation(platform(libs.androidx.compose.bom))
-  androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-  androidTestImplementation(libs.androidx.test.runner)
-  debugImplementation(libs.androidx.compose.ui.test.manifest)
+  testImplementation(libs.junit)
 }
