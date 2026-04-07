@@ -41,6 +41,9 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
+      - name: Run stability-ui tests
+        run: ./gradlew :stability-ui:testDebugUnitTest --stacktrace
+
       - name: Build debug APK
         run: |
           ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
