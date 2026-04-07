@@ -41,13 +41,28 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Run stability-ui tests
+      - name: Run stability-ui unit tests
         run: ./gradlew :stability-ui:testDebugUnitTest --stacktrace
 
-      - name: Build debug APK
+      - name: Build debug APK and test APK
         run: |
-          ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
+          ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace 2>&1 | tee build-output.log
           exit ${PIPESTATUS[0]}
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Android emulator tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
 
       - name: Post build errors to PR
         if: failure() && github.event_name == 'pull_request'
@@ -55,7 +70,8 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const log = fs.readFileSync('build-output.log', 'utf8');
+            let log = '';
+            try { log = fs.readFileSync('build-output.log', 'utf8'); } catch(e) {}
             const lines = log.split('\n');
             const errorLines = lines.filter(l =>
               (l.includes('e: ') || l.includes('FAILURE') || l.includes('BUILD FAILED') ||
@@ -72,12 +88,15 @@ jobs:
               body: body.substring(0, 65000)
             });
 
-      - name: Upload build log on failure
+      - name: Upload test results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: build-log
-          path: build-output.log
+          name: test-results
+          path: |
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/
+            build-output.log
           retention-days: 7
 
       - name: Upload demo APK
