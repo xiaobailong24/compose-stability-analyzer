@@ -58,7 +58,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.skydoves.compose.stability.runtime.RecompositionTracker
 import com.skydoves.compose.stability.runtime.TraceRecomposition
+import com.skydoves.compose.stability.runtime.createRecompositionTracker
 import com.skydoves.myapplication.models.ImmutableData
 import com.skydoves.myapplication.models.MixedStabilityClass
 import com.skydoves.myapplication.models.StableUser
@@ -145,30 +147,45 @@ private fun PrimitivesTab() {
 @TraceRecomposition(tag = "primitive-int")
 @Composable
 fun TrackedIntDisplay(value: Int) {
+  val t = rememberTracker("TrackedIntDisplay", "primitive-int")
+  t.trackParameter("value", "Int", value, true)
+  t.logIfThresholdMet()
   StabilityCard(label = "Int (stable)", content = "$value", color = Color(0xFF4CAF50))
 }
 
 @TraceRecomposition(tag = "primitive-float")
 @Composable
 fun TrackedFloatDisplay(value: Float) {
+  val t = rememberTracker("TrackedFloatDisplay", "primitive-float")
+  t.trackParameter("value", "Float", value, true)
+  t.logIfThresholdMet()
   StabilityCard(label = "Float (stable)", content = "$value", color = Color(0xFF4CAF50))
 }
 
 @TraceRecomposition(tag = "primitive-bool")
 @Composable
 fun TrackedBoolDisplay(value: Boolean) {
+  val t = rememberTracker("TrackedBoolDisplay", "primitive-bool")
+  t.trackParameter("value", "Boolean", value, true)
+  t.logIfThresholdMet()
   StabilityCard(label = "Boolean (stable)", content = "$value", color = Color(0xFF4CAF50))
 }
 
 @TraceRecomposition(tag = "primitive-string")
 @Composable
 fun TrackedStringDisplay(value: String) {
+  val t = rememberTracker("TrackedStringDisplay", "primitive-string")
+  t.trackParameter("value", "String", value, true)
+  t.logIfThresholdMet()
   StabilityCard(label = "String (stable)", content = value, color = Color(0xFF4CAF50))
 }
 
 @TraceRecomposition(tag = "primitive-nullable")
 @Composable
 fun TrackedNullableDisplay(value: Int?) {
+  val t = rememberTracker("TrackedNullableDisplay", "primitive-nullable")
+  t.trackParameter("value", "Int?", value, true)
+  t.logIfThresholdMet()
   StabilityCard(
     label = "Int? (stable)",
     content = value?.toString() ?: "null",
@@ -233,26 +250,27 @@ private fun CollectionsTab() {
 @TraceRecomposition(tag = "collection-immutable")
 @Composable
 fun TrackedImmutableListDisplay(items: ImmutableList<String>) {
-  CollectionCard(
-    label = "ImmutableList (stable)",
-    items = items,
-    color = Color(0xFF4CAF50),
-  )
+  val t = rememberTracker("TrackedImmutableListDisplay", "collection-immutable")
+  t.trackParameter("items", "ImmutableList", items, true)
+  t.logIfThresholdMet()
+  CollectionCard(label = "ImmutableList (stable)", items = items, color = Color(0xFF4CAF50))
 }
 
 @TraceRecomposition(tag = "collection-list")
 @Composable
 fun TrackedListDisplay(items: List<String>) {
-  CollectionCard(
-    label = "List<String> (runtime)",
-    items = items,
-    color = Color(0xFFFFC107),
-  )
+  val t = rememberTracker("TrackedListDisplay", "collection-list")
+  t.trackParameter("items", "List", items, false)
+  t.logIfThresholdMet()
+  CollectionCard(label = "List<String> (runtime)", items = items, color = Color(0xFFFFC107))
 }
 
 @TraceRecomposition(tag = "collection-mutable")
 @Composable
 fun TrackedMutableListDisplay(items: List<String>) {
+  val t = rememberTracker("TrackedMutableListDisplay", "collection-mutable")
+  t.trackParameter("items", "List", items, false)
+  t.logIfThresholdMet()
   CollectionCard(
     label = "MutableList snapshot (unstable origin)",
     items = items,
@@ -263,6 +281,9 @@ fun TrackedMutableListDisplay(items: List<String>) {
 @TraceRecomposition(tag = "collection-mixed")
 @Composable
 fun TrackedMixedClassDisplay(data: MixedStabilityClass) {
+  val t = rememberTracker("TrackedMixedClassDisplay", "collection-mixed")
+  t.trackParameter("data", "MixedStabilityClass", data, false)
+  t.logIfThresholdMet()
   StabilityCard(
     label = "MixedStabilityClass (unstable)",
     content = "id=${data.id}, name=${data.name}, tags=${data.tags.size}",
@@ -327,6 +348,9 @@ private fun StateManagementTab() {
 @TraceRecomposition(tag = "state-sealed")
 @Composable
 fun TrackedSealedStateDisplay(state: UserState) {
+  val t = rememberTracker("TrackedSealedStateDisplay", "state-sealed")
+  t.trackParameter("state", "UserState", state, false)
+  t.logIfThresholdMet()
   val (label, content, color) = when (state) {
     is UserState.Loading -> Triple("Loading", "...", Color(0xFFFFC107))
     is UserState.Success -> Triple("Success", state.user.name, Color(0xFF4CAF50))
@@ -338,6 +362,9 @@ fun TrackedSealedStateDisplay(state: UserState) {
 @TraceRecomposition(tag = "state-stable-user")
 @Composable
 fun TrackedStableUserDetail(user: StableUser) {
+  val t = rememberTracker("TrackedStableUserDetail", "state-stable-user")
+  t.trackParameter("user", "StableUser", user, true)
+  t.logIfThresholdMet()
   StabilityCard(
     label = "StableUser (stable)",
     content = "${user.name}, age ${user.age}",
@@ -348,6 +375,9 @@ fun TrackedStableUserDetail(user: StableUser) {
 @TraceRecomposition(tag = "state-unstable-user")
 @Composable
 fun TrackedUnstableUserDetail(user: UnstableUser) {
+  val t = rememberTracker("TrackedUnstableUserDetail", "state-unstable-user")
+  t.trackParameter("user", "UnstableUser", user, false)
+  t.logIfThresholdMet()
   StabilityCard(
     label = "UnstableUser (unstable - var props)",
     content = "${user.name}, age ${user.age}",
@@ -453,6 +483,11 @@ private fun NestedComposablesTab() {
 @TraceRecomposition(tag = "nested-parent")
 @Composable
 fun TrackedParent(outerValue: Int, innerValue: Int, showChild: Boolean) {
+  val t = rememberTracker("TrackedParent", "nested-parent")
+  t.trackParameter("outerValue", "Int", outerValue, true)
+  t.trackParameter("innerValue", "Int", innerValue, true)
+  t.trackParameter("showChild", "Boolean", showChild, true)
+  t.logIfThresholdMet()
   Card(
     modifier = Modifier.fillMaxWidth(),
     colors = CardDefaults.cardColors(containerColor = Color(0xFF7C4DFF).copy(alpha = 0.08f)),
@@ -483,6 +518,9 @@ fun TrackedParent(outerValue: Int, innerValue: Int, showChild: Boolean) {
 @TraceRecomposition(tag = "nested-child")
 @Composable
 fun TrackedChild(value: Int) {
+  val t = rememberTracker("TrackedChild", "nested-child")
+  t.trackParameter("value", "Int", value, true)
+  t.logIfThresholdMet()
   Box(
     modifier = Modifier
       .fillMaxWidth()
@@ -566,6 +604,11 @@ private fun StressTestTab() {
 @TraceRecomposition(tag = "stress-item")
 @Composable
 fun TrackedListItem(index: Int, tick: Int, isEven: Boolean) {
+  val t = rememberTracker("TrackedListItem-$index", "stress-item")
+  t.trackParameter("index", "Int", index, true)
+  t.trackParameter("tick", "Int", tick, true)
+  t.trackParameter("isEven", "Boolean", isEven, true)
+  t.logIfThresholdMet()
   val bgColor = if (isEven) {
     Color(0xFFE3F2FD)
   } else {
@@ -591,6 +634,15 @@ fun TrackedListItem(index: Int, tick: Int, isEven: Boolean) {
       )
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Tracking helper — simulates what the compiler plugin would inject
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun rememberTracker(name: String, tag: String): RecompositionTracker {
+  return remember { createRecompositionTracker(name, tag, threshold = 1) }
 }
 
 // ---------------------------------------------------------------------------
