@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -93,7 +94,7 @@ fun RecompositionMonitorOverlay(
     redCount > 0 -> Severity.RED.color
     yellowCount > 0 -> Severity.YELLOW.color
     totalCount > 0 -> Severity.GREEN.color
-    else -> Color(0xFF666666)
+    else -> Color(0xFF7C4DFF)
   }
 
   var offsetX by remember { mutableFloatStateOf(0f) }
@@ -105,6 +106,7 @@ fun RecompositionMonitorOverlay(
   ) {
     Column(
       modifier = Modifier
+        .statusBarsPadding()
         .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
         .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -149,9 +151,8 @@ fun RecompositionMonitorOverlay(
         }
       }
 
-      // Mini label
-      if (composables.isNotEmpty()) {
-        Box(
+      // Mini label — always visible
+      Box(
           modifier = Modifier
             .padding(top = 4.dp)
             .clip(RoundedCornerShape(4.dp))
@@ -166,7 +167,6 @@ fun RecompositionMonitorOverlay(
             fontFamily = FontFamily.Monospace,
           )
         }
-      }
     }
   }
 }
