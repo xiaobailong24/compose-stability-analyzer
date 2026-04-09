@@ -21,19 +21,23 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,16 +47,16 @@ import androidx.compose.ui.unit.sp
  *
  * **Case 1 — Single row (enough space):**
  * ```
- * | Rate order  ☆☆☆☆☆          [Order again] |
+ * [Rate order  ☆☆☆☆☆]          [Order again]
  * ```
- * The rating section fills remaining space; the button is right-aligned with intrinsic width.
+ * Rating chip fills remaining space; the button is right-aligned with intrinsic width.
  *
  * **Case 2 — Two rows (not enough space, e.g. long translations):**
  * ```
- * | Minha avaliação           ☆☆☆☆☆ |
- * |                      [Pedir de novo] |
+ * [Minha avaliação           ★★★☆☆]
+ *                          [Pedir de novo]
  * ```
- * The rating section takes the full first row; the button wraps to a second row, right-aligned.
+ * Rating chip takes full first row; button wraps to second row, right-aligned.
  */
 @Composable
 fun OrderActionRow(
@@ -68,52 +72,58 @@ fun OrderActionRow(
     horizontalArrangement = Arrangement.End,
     verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
-    // Left section: rating label + stars
-    // weight(1f) makes it fill remaining space on the same row;
-    // when the button can't fit, FlowRow wraps the button to the next line,
-    // and this section gets fillMaxWidth via weight(1f) on the first row.
-    Row(
+    // Rating chip: outlined pill container with label + stars
+    // weight(1f) fills remaining space on the same row;
+    // when the button can't fit, FlowRow wraps it to the next line,
+    // and this chip stretches to full width on the first row.
+    Surface(
       modifier = Modifier
         .weight(1f)
+        .height(40.dp)
         .align(Alignment.CenterVertically),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
+      shape = RoundedCornerShape(50),
+      border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
+      color = Color.Transparent,
     ) {
-      Text(
-        text = ratingLabel,
-        fontSize = 13.sp,
-        color = Color.DarkGray,
-      )
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat(5) { index ->
-          val filled = index < rating
-          Icon(
-            painter = painterResource(
-              id = if (filled) {
-                android.R.drawable.btn_star_big_on
+      Row(
+        modifier = Modifier.padding(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+          text = ratingLabel,
+          fontSize = 13.sp,
+          color = Color(0xFF333333),
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+          repeat(5) { index ->
+            val filled = index < rating
+            Icon(
+              imageVector = if (filled) {
+                Icons.Filled.Star
               } else {
-                android.R.drawable.btn_star_big_off
+                Icons.Outlined.StarOutline
               },
-            ),
-            contentDescription = "Star ${index + 1}",
-            modifier = Modifier
-              .size(20.dp),
-            tint = if (filled) Color(0xFFFFC107) else Color.LightGray,
-          )
+              contentDescription = "Star ${index + 1}",
+              modifier = Modifier.size(18.dp),
+              tint = if (filled) Color(0xFFFFC107) else Color(0xFFBDBDBD),
+            )
+          }
         }
       }
     }
 
     Spacer(modifier = Modifier.width(8.dp))
 
-    // Right section: action button with intrinsic width
+    // Action button: yellow pill with black border
     OutlinedButton(
       onClick = onButtonClick,
+      modifier = Modifier.height(40.dp),
       shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color.Black),
+      border = BorderStroke(1.dp, Color(0xFF333333)),
       colors = ButtonDefaults.outlinedButtonColors(
         containerColor = Color(0xFFFFEB3B),
-        contentColor = Color.Black,
+        contentColor = Color(0xFF333333),
       ),
     ) {
       Text(
@@ -124,7 +134,7 @@ fun OrderActionRow(
   }
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "Single row — English")
+@Preview(showBackground = true, widthDp = 340, name = "Single row — Rate order")
 @Composable
 private fun OrderActionRowPreviewSingleRow() {
   OrderActionRow(
@@ -135,7 +145,7 @@ private fun OrderActionRowPreviewSingleRow() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "Single row — rated")
+@Preview(showBackground = true, widthDp = 340, name = "Single row — My rating")
 @Composable
 private fun OrderActionRowPreviewRated() {
   OrderActionRow(
@@ -146,7 +156,7 @@ private fun OrderActionRowPreviewRated() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "Two rows — Portuguese")
+@Preview(showBackground = true, widthDp = 340, name = "Two rows — Portuguese")
 @Composable
 private fun OrderActionRowPreviewTwoRows() {
   OrderActionRow(
