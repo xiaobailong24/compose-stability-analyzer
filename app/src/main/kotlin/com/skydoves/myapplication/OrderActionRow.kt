@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +57,11 @@ import androidx.compose.ui.unit.sp
  *                          [Pedir de novo]
  * ```
  * Rating chip takes full first row; button wraps to second row, right-aligned.
+ *
+ * Key trick: [maxLines] = 1 on Text makes it report full content width as its
+ * minimum intrinsic width, so FlowRow can correctly decide when to wrap.
+ * Without this, weight(1f) causes the intrinsic width to be ~0 and
+ * FlowRow never wraps.
  */
 @Composable
 fun OrderActionRow(
@@ -68,7 +74,7 @@ fun OrderActionRow(
 ) {
   FlowRow(
     modifier = modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.End,
+    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
     verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     // Rating chip: outlined pill container with label + stars
@@ -93,7 +99,10 @@ fun OrderActionRow(
           text = ratingLabel,
           fontSize = 13.sp,
           color = Color(0xFF333333),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
         )
+        Spacer(modifier = Modifier.width(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
           repeat(5) { index ->
             val filled = index < rating
@@ -107,8 +116,6 @@ fun OrderActionRow(
         }
       }
     }
-
-    Spacer(modifier = Modifier.width(8.dp))
 
     // Action button: yellow pill with black border
     OutlinedButton(
@@ -129,9 +136,11 @@ fun OrderActionRow(
   }
 }
 
-@Preview(showBackground = true, widthDp = 340, name = "Single row — Rate order")
+// === Previews with various text lengths ===
+
+@Preview(showBackground = true, widthDp = 360, name = "1. Short EN — single row")
 @Composable
-private fun OrderActionRowPreviewSingleRow() {
+private fun PreviewShortEn() {
   OrderActionRow(
     ratingLabel = "Rate order",
     buttonLabel = "Order again",
@@ -140,9 +149,9 @@ private fun OrderActionRowPreviewSingleRow() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 340, name = "Single row — My rating")
+@Preview(showBackground = true, widthDp = 360, name = "2. Short EN rated — single row")
 @Composable
-private fun OrderActionRowPreviewRated() {
+private fun PreviewShortEnRated() {
   OrderActionRow(
     ratingLabel = "My rating",
     buttonLabel = "Order again",
@@ -151,13 +160,68 @@ private fun OrderActionRowPreviewRated() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 340, name = "Two rows — Portuguese")
+@Preview(showBackground = true, widthDp = 360, name = "3. Portuguese — may wrap")
 @Composable
-private fun OrderActionRowPreviewTwoRows() {
+private fun PreviewPortuguese() {
   OrderActionRow(
     ratingLabel = "Minha avaliação",
     buttonLabel = "Pedir de novo",
     rating = 3,
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "4. German — wraps")
+@Composable
+private fun PreviewGerman() {
+  OrderActionRow(
+    ratingLabel = "Meine Bewertung",
+    buttonLabel = "Erneut bestellen",
+    rating = 4,
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "5. Japanese — single row")
+@Composable
+private fun PreviewJapanese() {
+  OrderActionRow(
+    ratingLabel = "評価する",
+    buttonLabel = "もう一度注文",
+    rating = 0,
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "6. Russian — wraps")
+@Composable
+private fun PreviewRussian() {
+  OrderActionRow(
+    ratingLabel = "Моя оценка заказа",
+    buttonLabel = "Заказать снова",
+    rating = 2,
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "7. Extra long — wraps + ellipsis")
+@Composable
+private fun PreviewExtraLong() {
+  OrderActionRow(
+    ratingLabel = "Bewerten Sie Ihre Bestellung bitte",
+    buttonLabel = "Nochmal bestellen",
+    rating = 5,
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "8. Short both — single row")
+@Composable
+private fun PreviewShortBoth() {
+  OrderActionRow(
+    ratingLabel = "评价",
+    buttonLabel = "再来一单",
+    rating = 0,
     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
   )
 }

@@ -124,9 +124,9 @@ fun OrderActionFlowRow(
   }
 }
 
-@Preview(showBackground = true, widthDp = 340, name = "Gemini — Single row")
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 1. Short EN")
 @Composable
-private fun OrderActionFlowRowPreviewSingleRow() {
+private fun GeminiPreviewShortEn() {
   OrderActionFlowRow(
     ratingText = "Rate order",
     buttonText = "Order again",
@@ -134,12 +134,52 @@ private fun OrderActionFlowRowPreviewSingleRow() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 340, name = "Gemini — Two rows")
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 2. Portuguese")
 @Composable
-private fun OrderActionFlowRowPreviewTwoRows() {
+private fun GeminiPreviewPortuguese() {
   OrderActionFlowRow(
     ratingText = "Minha avaliação",
     buttonText = "Pedir de novo",
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 3. German")
+@Composable
+private fun GeminiPreviewGerman() {
+  OrderActionFlowRow(
+    ratingText = "Meine Bewertung",
+    buttonText = "Erneut bestellen",
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 4. Russian")
+@Composable
+private fun GeminiPreviewRussian() {
+  OrderActionFlowRow(
+    ratingText = "Моя оценка заказа",
+    buttonText = "Заказать снова",
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 5. Extra long")
+@Composable
+private fun GeminiPreviewExtraLong() {
+  OrderActionFlowRow(
+    ratingText = "Bewerten Sie Ihre Bestellung bitte",
+    buttonText = "Nochmal bestellen",
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+  )
+}
+
+@Preview(showBackground = true, widthDp = 360, name = "Gemini 6. Short CN")
+@Composable
+private fun GeminiPreviewShortCn() {
+  OrderActionFlowRow(
+    ratingText = "评价",
+    buttonText = "再来一单",
     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
   )
 }
