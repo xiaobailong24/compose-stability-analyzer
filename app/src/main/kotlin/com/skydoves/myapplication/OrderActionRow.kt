@@ -17,7 +17,6 @@ package com.skydoves.myapplication
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,31 +36,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * A responsive order action row that uses [FlowRow] to handle two layout scenarios:
+ * A responsive order action row using custom [Layout] to handle two scenarios:
  *
  * **Case 1 — Single row (enough space):**
  * ```
  * [Rate order  ☆☆☆☆☆]          [Order again]
  * ```
- * Rating chip fills remaining space; the button is right-aligned with intrinsic width.
+ * Rating chip stretches to fill remaining space; button right-aligned.
  *
- * **Case 2 — Two rows (not enough space, e.g. long translations):**
+ * **Case 2 — Two rows (not enough space):**
  * ```
  * [Minha avaliação           ★★★☆☆]
  *                          [Pedir de novo]
  * ```
- * Rating chip takes full first row; button wraps to second row, right-aligned.
+ * Rating chip takes full width; button wraps to second row, right-aligned.
  *
- * Key trick: [maxLines] = 1 on Text makes it report full content width as its
- * minimum intrinsic width, so FlowRow can correctly decide when to wrap.
- * Without this, weight(1f) causes the intrinsic width to be ~0 and
- * FlowRow never wraps.
+ * Why not FlowRow + weight(1f)?
+ * FlowRow places non-weighted children first, then gives remaining space to
+ * weighted children. This means weighted children ALWAYS fit the leftover,
+ * so wrapping never triggers. A custom Layout measures both children's natural
+ * widths to decide single-line vs. two-line placement.
  */
 @Composable
 fun OrderActionRow(
@@ -72,67 +74,120 @@ fun OrderActionRow(
   onButtonClick: () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
-  FlowRow(
+  val gap = 8.dp
+
+  Layout(
+    content = {
+      // [0] Rating chip
+      RatingChip(label = ratingLabel, rating = rating)
+      // [1] Action button
+      ActionButton(label = buttonLabel, onClick = onButtonClick)
+    },
     modifier = modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-    verticalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    // Rating chip: outlined pill container with label + stars
-    // weight(1f) fills remaining space on the same row;
-    // when the button can't fit, FlowRow wraps it to the next line,
-    // and this chip stretches to full width on the first row.
-    Surface(
-      modifier = Modifier
-        .weight(1f)
-        .height(40.dp)
-        .align(Alignment.CenterVertically),
-      shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
-      color = Color.Transparent,
-    ) {
-      Row(
-        modifier = Modifier.padding(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Text(
-          text = ratingLabel,
-          fontSize = 13.sp,
-          color = Color(0xFF333333),
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
+  ) { measurables, constraints ->
+    val gapPx = gap.roundToPx()
+
+    // 1. Measure button at its natural (wrap-content) width
+    val buttonPlaceable = measurables[1].measure(
+      constraints.copy(minWidth = 0),
+    )
+
+    // 2. Check if rating's natural width + gap + button fit on one row
+    val ratingNaturalWidth = measurables[0].maxIntrinsicWidth(constraints.maxHeight)
+    val singleLine =
+      ratingNaturalWidth + gapPx + buttonPlaceable.width <= constraints.maxWidth
+
+    if (singleLine) {
+      // Single row: rating fills remaining space, button on the right
+      val ratingWidth = constraints.maxWidth - gapPx - buttonPlaceable.width
+      val ratingPlaceable = measurables[0].measure(
+        Constraints.fixed(ratingWidth, buttonPlaceable.height),
+      )
+      val rowHeight = maxOf(ratingPlaceable.height, buttonPlaceable.height)
+      layout(constraints.maxWidth, rowHeight) {
+        ratingPlaceable.placeRelative(
+          0,
+          (rowHeight - ratingPlaceable.height) / 2,
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          repeat(5) { index ->
-            val filled = index < rating
-            Icon(
-              imageVector = Icons.Filled.Star,
-              contentDescription = "Star ${index + 1}",
-              modifier = Modifier.size(18.dp),
-              tint = if (filled) Color(0xFFFFC107) else Color(0xFFBDBDBD),
-            )
-          }
+        buttonPlaceable.placeRelative(
+          constraints.maxWidth - buttonPlaceable.width,
+          (rowHeight - buttonPlaceable.height) / 2,
+        )
+      }
+    } else {
+      // Two rows: rating full width on row 1, button right-aligned on row 2
+      val ratingPlaceable = measurables[0].measure(
+        Constraints.fixed(constraints.maxWidth, buttonPlaceable.height),
+      )
+      val totalHeight = ratingPlaceable.height + gapPx + buttonPlaceable.height
+      layout(constraints.maxWidth, totalHeight) {
+        ratingPlaceable.placeRelative(0, 0)
+        buttonPlaceable.placeRelative(
+          constraints.maxWidth - buttonPlaceable.width,
+          ratingPlaceable.height + gapPx,
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun RatingChip(
+  label: String,
+  rating: Int,
+  modifier: Modifier = Modifier,
+) {
+  Surface(
+    modifier = modifier.height(40.dp),
+    shape = RoundedCornerShape(50),
+    border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
+    color = Color.Transparent,
+  ) {
+    Row(
+      modifier = Modifier.padding(horizontal = 12.dp),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Text(
+        text = label,
+        fontSize = 13.sp,
+        color = Color(0xFF333333),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.weight(1f, fill = false),
+      )
+      Spacer(modifier = Modifier.width(8.dp))
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        repeat(5) { index ->
+          Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = "Star ${index + 1}",
+            modifier = Modifier.size(18.dp),
+            tint = if (index < rating) Color(0xFFFFC107) else Color(0xFFBDBDBD),
+          )
         }
       }
     }
+  }
+}
 
-    // Action button: yellow pill with black border
-    OutlinedButton(
-      onClick = onButtonClick,
-      modifier = Modifier.height(40.dp),
-      shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color(0xFF333333)),
-      colors = ButtonDefaults.outlinedButtonColors(
-        containerColor = Color(0xFFFFEB3B),
-        contentColor = Color(0xFF333333),
-      ),
-    ) {
-      Text(
-        text = buttonLabel,
-        fontSize = 13.sp,
-      )
-    }
+@Composable
+private fun ActionButton(
+  label: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  OutlinedButton(
+    onClick = onClick,
+    modifier = modifier.height(40.dp),
+    shape = RoundedCornerShape(50),
+    border = BorderStroke(1.dp, Color(0xFF333333)),
+    colors = ButtonDefaults.outlinedButtonColors(
+      containerColor = Color(0xFFFFEB3B),
+      contentColor = Color(0xFF333333),
+    ),
+  ) {
+    Text(text = label, fontSize = 13.sp)
   }
 }
 
@@ -215,9 +270,9 @@ private fun PreviewExtraLong() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "8. Short both — single row")
+@Preview(showBackground = true, widthDp = 360, name = "8. Short CN — single row")
 @Composable
-private fun PreviewShortBoth() {
+private fun PreviewShortCn() {
   OrderActionRow(
     ratingLabel = "评价",
     buttonLabel = "再来一单",
