@@ -21,6 +21,7 @@ import com.skydoves.compose.stability.runtime.ComposeStabilityAnalyzer
 import com.skydoves.compose.stability.runtime.DefaultRecompositionLogger
 import com.skydoves.compose.stability.runtime.RecompositionEvent
 import com.skydoves.compose.stability.runtime.RecompositionLogger
+import com.skydoves.compose.stability.ui.StabilityMonitor
 
 /**
  * Example Application class showing how to configure RecompositionLogger.
@@ -36,6 +37,10 @@ class MyApplication : Application() {
 
   override fun onCreate() {
     super.onCreate()
+
+    // Install the in-app recomposition monitor (LeakCanary-style)
+    // This hooks into ComposeStabilityAnalyzer and provides a floating overlay
+    StabilityMonitor.install(this)
 
     // Example 1: Enable default logger only in debug builds
     // This is the recommended setup for most apps

@@ -38,6 +38,9 @@ lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint
 lint = { module = "com.android.tools.lint:lint", version.ref = "lintApi" }
 lint-checks = { module = "com.android.tools.lint:lint-checks", version.ref = "lintApi" }
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lintApi" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-test-runner = { module = "androidx.test:runner", version = "1.6.2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

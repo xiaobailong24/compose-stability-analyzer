@@ -1,0 +1,2 @@
+-keep class com.skydoves.compose.stability.ui.StabilityMonitorInitializer
+-keep class com.skydoves.compose.stability.ui.RecompositionDetailActivity

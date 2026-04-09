@@ -24,6 +24,7 @@ include(
   ":stability-runtime",
   ":stability-gradle",
   ":stability-lint",
+  ":stability-ui",
   ":compiler-tests",
   ":app",
   ":app-model",

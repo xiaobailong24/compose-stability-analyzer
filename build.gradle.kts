@@ -17,7 +17,7 @@ plugins {
 }
 
 apiValidation {
-  ignoredProjects.addAll(listOf("app", "app-model"))
+  ignoredProjects.addAll(listOf("app", "app-model", "stability-ui"))
 }
 
 subprojects {
