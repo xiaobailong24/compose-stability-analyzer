@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -99,11 +98,7 @@ fun OrderActionRow(
           repeat(5) { index ->
             val filled = index < rating
             Icon(
-              imageVector = if (filled) {
-                Icons.Filled.Star
-              } else {
-                Icons.Outlined.StarOutline
-              },
+              imageVector = Icons.Filled.Star,
               contentDescription = "Star ${index + 1}",
               modifier = Modifier.size(18.dp),
               tint = if (filled) Color(0xFFFFC107) else Color(0xFFBDBDBD),

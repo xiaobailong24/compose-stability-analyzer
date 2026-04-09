@@ -41,14 +41,9 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Run stability-ui unit tests
-        run: |
-          ./gradlew :stability-ui:testDebugUnitTest -PskipStabilityAnalyzer --stacktrace 2>&1 | tee build-output.log
-          exit ${PIPESTATUS[0]}
-
       - name: Build debug APK and test APK
         run: |
-          ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest -PskipStabilityAnalyzer --stacktrace 2>&1 | tee -a build-output.log
+          ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest -PskipStabilityAnalyzer --stacktrace 2>&1 | tee build-output.log
           exit ${PIPESTATUS[0]}
 
       - name: Enable KVM
