@@ -160,6 +160,35 @@ private fun BasicTrackingTab() {
       buttonLabel = "Pedir de novo",
       rating = 3,
     )
+
+    Spacer(modifier = Modifier.height(32.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // Gemini FlowRow implementation for comparison
+    Text(
+      "Gemini FlowRow Implementation",
+      modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    OrderActionFlowRow(
+      ratingText = "Rate order",
+      buttonText = "Order again",
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    OrderActionFlowRow(
+      ratingText = "My rating",
+      buttonText = "Order again",
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    OrderActionFlowRow(
+      ratingText = "Minha avaliação",
+      buttonText = "Pedir de novo",
+    )
   }
 }
 
