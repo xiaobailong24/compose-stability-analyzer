@@ -17,9 +17,13 @@ package com.skydoves.myapplication
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +56,12 @@ fun RecompositionTrackingExample() {
   var stableUser by remember { mutableStateOf(StableUser("John", 30)) }
   var unstableUser by remember { mutableStateOf(UnstableUser("Jane", 25)) }
 
-  Column(modifier = Modifier.padding(16.dp)) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .verticalScroll(rememberScrollState())
+      .padding(16.dp),
+  ) {
     // Example 1: Basic tracking with default settings
     TrackedCounterDisplay(counter) {}
 
@@ -93,6 +102,38 @@ fun RecompositionTrackingExample() {
     Button(onClick = { unstableUser.age++ }) {
       Text("Mutate Unstable User")
     }
+
+    Spacer(modifier = Modifier.height(32.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // FlowRow responsive layout demos
+    Text("FlowRow Responsive Layout", modifier = Modifier.padding(bottom = 8.dp))
+
+    // Case 1: single row — short text fits on one line
+    OrderActionRow(
+      ratingLabel = "Rate order",
+      buttonLabel = "Order again",
+      rating = 0,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Case 1 variant: with rating filled
+    OrderActionRow(
+      ratingLabel = "My rating",
+      buttonLabel = "Order again",
+      rating = 3,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Case 2: two rows — long translated text wraps the button to the next line
+    OrderActionRow(
+      ratingLabel = "Minha avaliação",
+      buttonLabel = "Pedir de novo",
+      rating = 3,
+    )
   }
 }
 
