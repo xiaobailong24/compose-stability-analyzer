@@ -43,7 +43,7 @@ jobs:
 
       - name: Build debug APK
         run: |
-          ./gradlew :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
+          ./gradlew :app:assembleDebug -PskipStabilityAnalyzer --stacktrace 2>&1 | tee build-output.log
           exit ${PIPESTATUS[0]}
 
       - name: Post build errors to PR
