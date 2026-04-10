@@ -36,34 +36,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * A responsive order action row using custom [Layout] to handle two scenarios:
+ * A responsive order action row built on [AdaptiveActionLayout].
  *
  * **Case 1 — Single row (enough space):**
  * ```
  * [Rate order  ☆☆☆☆☆]          [Order again]
  * ```
- * Rating chip stretches to fill remaining space; button right-aligned.
  *
  * **Case 2 — Two rows (not enough space):**
  * ```
  * [Minha avaliação           ★★★☆☆]
  *                          [Pedir de novo]
  * ```
- * Rating chip takes full width; button wraps to second row, right-aligned.
- *
- * Why not FlowRow + weight(1f)?
- * FlowRow places non-weighted children first, then gives remaining space to
- * weighted children. This means weighted children ALWAYS fit the leftover,
- * so wrapping never triggers. A custom Layout measures both children's natural
- * widths to decide single-line vs. two-line placement.
  */
 @Composable
 fun OrderActionRow(
@@ -74,121 +64,65 @@ fun OrderActionRow(
   onButtonClick: () -> Unit = {},
   modifier: Modifier = Modifier,
 ) {
-  val gap = 8.dp
-
-  Layout(
-    content = {
-      // [0] Rating chip
-      RatingChip(label = ratingLabel, rating = rating)
-      // [1] Action button
-      ActionButton(label = buttonLabel, onClick = onButtonClick)
-    },
-    modifier = modifier.fillMaxWidth(),
-  ) { measurables, constraints ->
-    val gapPx = gap.roundToPx()
-
-    // 1. Measure button at its natural (wrap-content) width
-    val buttonPlaceable = measurables[1].measure(
-      constraints.copy(minWidth = 0),
-    )
-
-    // 2. Check if rating's natural width + gap + button fit on one row
-    val ratingNaturalWidth = measurables[0].maxIntrinsicWidth(constraints.maxHeight)
-    val singleLine =
-      ratingNaturalWidth + gapPx + buttonPlaceable.width <= constraints.maxWidth
-
-    if (singleLine) {
-      // Single row: rating fills remaining space, button on the right
-      val ratingWidth = constraints.maxWidth - gapPx - buttonPlaceable.width
-      val ratingPlaceable = measurables[0].measure(
-        Constraints.fixed(ratingWidth, buttonPlaceable.height),
-      )
-      val rowHeight = maxOf(ratingPlaceable.height, buttonPlaceable.height)
-      layout(constraints.maxWidth, rowHeight) {
-        ratingPlaceable.placeRelative(
-          0,
-          (rowHeight - ratingPlaceable.height) / 2,
-        )
-        buttonPlaceable.placeRelative(
-          constraints.maxWidth - buttonPlaceable.width,
-          (rowHeight - buttonPlaceable.height) / 2,
-        )
-      }
-    } else {
-      // Two rows: rating full width on row 1, button right-aligned on row 2
-      val ratingPlaceable = measurables[0].measure(
-        Constraints.fixed(constraints.maxWidth, buttonPlaceable.height),
-      )
-      val totalHeight = ratingPlaceable.height + gapPx + buttonPlaceable.height
-      layout(constraints.maxWidth, totalHeight) {
-        ratingPlaceable.placeRelative(0, 0)
-        buttonPlaceable.placeRelative(
-          constraints.maxWidth - buttonPlaceable.width,
-          ratingPlaceable.height + gapPx,
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun RatingChip(
-  label: String,
-  rating: Int,
-  modifier: Modifier = Modifier,
-) {
-  Surface(
-    modifier = modifier.height(40.dp),
-    shape = RoundedCornerShape(50),
-    border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
-    color = Color.Transparent,
-  ) {
-    Row(
-      modifier = Modifier.padding(horizontal = 12.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Text(
-        text = label,
-        fontSize = 13.sp,
-        color = Color(0xFF333333),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.weight(1f, fill = false),
-      )
-      Spacer(modifier = Modifier.width(8.dp))
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat(5) { index ->
-          Icon(
-            imageVector = Icons.Filled.Star,
-            contentDescription = "Star ${index + 1}",
-            modifier = Modifier.size(18.dp),
-            tint = if (index < rating) Color(0xFFFFC107) else Color(0xFFBDBDBD),
+  AdaptiveActionLayout(
+    modifier = modifier,
+    horizontalSpacing = 8.dp,
+    verticalSpacing = 8.dp,
+    mainContent = {
+      Surface(
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(40.dp),
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
+        color = Color.Transparent,
+      ) {
+        Row(
+          modifier = Modifier.padding(horizontal = 12.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+            text = ratingLabel,
+            fontSize = 13.sp,
+            color = Color(0xFF333333),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
           )
+          Spacer(modifier = Modifier.width(8.dp))
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            repeat(5) { index ->
+              Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = "Star ${index + 1}",
+                modifier = Modifier.size(18.dp),
+                tint = if (index < rating) {
+                  Color(0xFFFFC107)
+                } else {
+                  Color(0xFFBDBDBD)
+                },
+              )
+            }
+          }
         }
       }
-    }
-  }
-}
-
-@Composable
-private fun ActionButton(
-  label: String,
-  onClick: () -> Unit,
-  modifier: Modifier = Modifier,
-) {
-  OutlinedButton(
-    onClick = onClick,
-    modifier = modifier.height(40.dp),
-    shape = RoundedCornerShape(50),
-    border = BorderStroke(1.dp, Color(0xFF333333)),
-    colors = ButtonDefaults.outlinedButtonColors(
-      containerColor = Color(0xFFFFEB3B),
-      contentColor = Color(0xFF333333),
-    ),
-  ) {
-    Text(text = label, fontSize = 13.sp)
-  }
+    },
+    actionContent = {
+      OutlinedButton(
+        onClick = onButtonClick,
+        modifier = Modifier.height(40.dp),
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, Color(0xFF333333)),
+        colors = ButtonDefaults.outlinedButtonColors(
+          containerColor = Color(0xFFFFEB3B),
+          contentColor = Color(0xFF333333),
+        ),
+      ) {
+        Text(text = buttonLabel, fontSize = 13.sp)
+      }
+    },
+  )
 }
 
 // === Previews with various text lengths ===

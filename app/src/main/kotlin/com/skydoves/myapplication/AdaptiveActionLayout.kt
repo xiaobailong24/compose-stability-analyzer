@@ -58,8 +58,12 @@ fun AdaptiveActionLayout(
     val mainMeasurable = measurables[0]
     val actionMeasurable = measurables[1]
 
-    // 1. Measure the action area (button) first to get its natural size
-    val actionPlaceable = actionMeasurable.measure(constraints)
+    // 1. Measure the action area (button) at its natural (wrap-content) size.
+    //    Relax minWidth to 0 so the button isn't forced to fill parent width
+    //    (fillMaxWidth on the Layout sets minWidth = maxWidth in constraints).
+    val actionPlaceable = actionMeasurable.measure(
+      constraints.copy(minWidth = 0),
+    )
 
     // 2. Get the main content's preferred width (unconstrained)
     val mainPreferredWidth =
