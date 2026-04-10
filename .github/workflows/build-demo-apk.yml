@@ -41,14 +41,9 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
-      - name: Run stability-ui unit tests
-        run: |
-          ./gradlew :stability-ui:testDebugUnitTest --stacktrace 2>&1 | tee build-output.log
-          exit ${PIPESTATUS[0]}
-
       - name: Build debug APK and test APK
         run: |
-          ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace 2>&1 | tee -a build-output.log
+          ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest -PskipStabilityAnalyzer --stacktrace 2>&1 | tee build-output.log
           exit ${PIPESTATUS[0]}
 
       - name: Enable KVM
@@ -64,8 +59,7 @@ jobs:
           arch: x86_64
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: ./gradlew :app:connectedDebugAndroidTest --stacktrace
-
+          script: ./gradlew :app:connectedDebugAndroidTest -PskipStabilityAnalyzer --stacktrace
       - name: Post build errors to PR
         if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v7

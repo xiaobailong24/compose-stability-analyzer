@@ -20,7 +20,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -79,7 +83,12 @@ private fun BasicTrackingTab() {
   var stableUser by remember { mutableStateOf(StableUser("John", 30)) }
   var unstableUser by remember { mutableStateOf(UnstableUser("Jane", 25)) }
 
-  Column(modifier = Modifier.padding(16.dp)) {
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .verticalScroll(rememberScrollState())
+      .padding(16.dp),
+  ) {
     // Example 1: Basic tracking with default settings
     TrackedCounterDisplay(counter) {}
 
@@ -120,6 +129,69 @@ private fun BasicTrackingTab() {
     Button(onClick = { unstableUser.age++ }) {
       Text("Mutate Unstable User")
     }
+
+    Spacer(modifier = Modifier.height(32.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // === 对比：FlowRow（有缺陷，无法换行） ===
+    Text(
+      "FlowRow + weight（无法换行）",
+      style = MaterialTheme.typography.titleSmall,
+      modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    OrderActionFlowRow(ratingText = "Rate order", buttonText = "Order again")
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionFlowRow(
+      ratingText = "Minha avaliação",
+      buttonText = "Pedir de novo",
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionFlowRow(
+      ratingText = "Meine Bewertung",
+      buttonText = "Erneut bestellen",
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionFlowRow(
+      ratingText = "Bewerten Sie Ihre Bestellung bitte",
+      buttonText = "Nochmal bestellen",
+    )
+
+    Spacer(modifier = Modifier.height(24.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // === 对比：自定义 Layout（正确换行） ===
+    Text(
+      "自定义 Layout（正确换行）",
+      style = MaterialTheme.typography.titleSmall,
+      modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    OrderActionRow(
+      ratingLabel = "Rate order",
+      buttonLabel = "Order again",
+      rating = 0,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionRow(
+      ratingLabel = "Minha avaliação",
+      buttonLabel = "Pedir de novo",
+      rating = 3,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionRow(
+      ratingLabel = "Meine Bewertung",
+      buttonLabel = "Erneut bestellen",
+      rating = 4,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionRow(
+      ratingLabel = "Bewerten Sie Ihre Bestellung bitte",
+      buttonLabel = "Nochmal bestellen",
+      rating = 5,
+    )
   }
 }
 
