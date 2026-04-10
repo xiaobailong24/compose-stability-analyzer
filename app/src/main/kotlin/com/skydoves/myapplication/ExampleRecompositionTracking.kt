@@ -24,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -133,12 +134,14 @@ private fun BasicTrackingTab() {
     HorizontalDivider()
     Spacer(modifier = Modifier.height(16.dp))
 
-    // === AdaptiveActionLayout demos ===
-    Text("AdaptiveActionLayout", modifier = Modifier.padding(bottom = 8.dp))
+    // === 对比：FlowRow（有缺陷，无法换行） ===
+    Text(
+      "FlowRow + weight（无法换行）",
+      style = MaterialTheme.typography.titleSmall,
+      modifier = Modifier.padding(bottom = 8.dp),
+    )
 
     OrderActionFlowRow(ratingText = "Rate order", buttonText = "Order again")
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionFlowRow(ratingText = "My rating", buttonText = "Order again")
     Spacer(modifier = Modifier.height(8.dp))
     OrderActionFlowRow(
       ratingText = "Minha avaliação",
@@ -151,16 +154,44 @@ private fun BasicTrackingTab() {
     )
     Spacer(modifier = Modifier.height(8.dp))
     OrderActionFlowRow(
-      ratingText = "Моя оценка заказа",
-      buttonText = "Заказать снова",
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionFlowRow(
       ratingText = "Bewerten Sie Ihre Bestellung bitte",
       buttonText = "Nochmal bestellen",
     )
+
+    Spacer(modifier = Modifier.height(24.dp))
+    HorizontalDivider()
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // === 对比：自定义 Layout（正确换行） ===
+    Text(
+      "自定义 Layout（正确换行）",
+      style = MaterialTheme.typography.titleSmall,
+      modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    OrderActionRow(
+      ratingLabel = "Rate order",
+      buttonLabel = "Order again",
+      rating = 0,
+    )
     Spacer(modifier = Modifier.height(8.dp))
-    OrderActionFlowRow(ratingText = "评价", buttonText = "再来一单")
+    OrderActionRow(
+      ratingLabel = "Minha avaliação",
+      buttonLabel = "Pedir de novo",
+      rating = 3,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionRow(
+      ratingLabel = "Meine Bewertung",
+      buttonLabel = "Erneut bestellen",
+      rating = 4,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OrderActionRow(
+      ratingLabel = "Bewerten Sie Ihre Bestellung bitte",
+      buttonLabel = "Nochmal bestellen",
+      rating = 5,
+    )
   }
 }
 

@@ -42,14 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * A responsive order action row built on [AdaptiveActionLayout].
+ * 基于自定义 [AdaptiveActionLayout] 的订单操作行（正确实现，支持换行）。
  *
- * **Case 1 — Single row (enough space):**
+ * 一行放得下时：
  * ```
  * [Rate order  ☆☆☆☆☆]          [Order again]
  * ```
  *
- * **Case 2 — Two rows (not enough space):**
+ * 一行放不下时（自动换行）：
  * ```
  * [Minha avaliação           ★★★☆☆]
  *                          [Pedir de novo]
@@ -69,6 +69,7 @@ fun OrderActionRow(
     horizontalSpacing = 8.dp,
     verticalSpacing = 8.dp,
     mainContent = {
+      // 评分区域：圆角边框胶囊 + 文字 + 星星
       Surface(
         modifier = Modifier
           .fillMaxWidth()
@@ -109,6 +110,7 @@ fun OrderActionRow(
       }
     },
     actionContent = {
+      // 操作按钮：黄色圆角胶囊
       OutlinedButton(
         onClick = onButtonClick,
         modifier = Modifier.height(40.dp),
@@ -125,9 +127,9 @@ fun OrderActionRow(
   )
 }
 
-// === Previews with various text lengths ===
+// === Preview ===
 
-@Preview(showBackground = true, widthDp = 360, name = "1. Short EN — single row")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 短文案-单行")
 @Composable
 private fun PreviewShortEn() {
   OrderActionRow(
@@ -138,7 +140,7 @@ private fun PreviewShortEn() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "2. Short EN rated — single row")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 中等文案-单行")
 @Composable
 private fun PreviewShortEnRated() {
   OrderActionRow(
@@ -149,7 +151,7 @@ private fun PreviewShortEnRated() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "3. Portuguese — may wrap")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 葡语-换行")
 @Composable
 private fun PreviewPortuguese() {
   OrderActionRow(
@@ -160,7 +162,7 @@ private fun PreviewPortuguese() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "4. German — wraps")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 德语-换行")
 @Composable
 private fun PreviewGerman() {
   OrderActionRow(
@@ -171,29 +173,7 @@ private fun PreviewGerman() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "5. Japanese — single row")
-@Composable
-private fun PreviewJapanese() {
-  OrderActionRow(
-    ratingLabel = "評価する",
-    buttonLabel = "もう一度注文",
-    rating = 0,
-    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-  )
-}
-
-@Preview(showBackground = true, widthDp = 360, name = "6. Russian — wraps")
-@Composable
-private fun PreviewRussian() {
-  OrderActionRow(
-    ratingLabel = "Моя оценка заказа",
-    buttonLabel = "Заказать снова",
-    rating = 2,
-    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-  )
-}
-
-@Preview(showBackground = true, widthDp = 360, name = "7. Extra long — wraps + ellipsis")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 超长文案-换行+省略")
 @Composable
 private fun PreviewExtraLong() {
   OrderActionRow(
@@ -204,7 +184,7 @@ private fun PreviewExtraLong() {
   )
 }
 
-@Preview(showBackground = true, widthDp = 360, name = "8. Short CN — single row")
+@Preview(showBackground = true, widthDp = 360, name = "自定义Layout 中文短文案-单行")
 @Composable
 private fun PreviewShortCn() {
   OrderActionRow(
