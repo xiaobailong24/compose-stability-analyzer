@@ -133,57 +133,8 @@ private fun BasicTrackingTab() {
     HorizontalDivider()
     Spacer(modifier = Modifier.height(16.dp))
 
-    // === Claude's FlowRow implementation ===
-    Text("Claude — OrderActionRow", modifier = Modifier.padding(bottom = 8.dp))
-
-    OrderActionRow(
-      ratingLabel = "Rate order",
-      buttonLabel = "Order again",
-      rating = 0,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "My rating",
-      buttonLabel = "Order again",
-      rating = 3,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "Minha avaliação",
-      buttonLabel = "Pedir de novo",
-      rating = 3,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "Meine Bewertung",
-      buttonLabel = "Erneut bestellen",
-      rating = 4,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "Моя оценка заказа",
-      buttonLabel = "Заказать снова",
-      rating = 2,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "Bewerten Sie Ihre Bestellung bitte",
-      buttonLabel = "Nochmal bestellen",
-      rating = 5,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    OrderActionRow(
-      ratingLabel = "评价",
-      buttonLabel = "再来一单",
-      rating = 0,
-    )
-
-    Spacer(modifier = Modifier.height(32.dp))
-    HorizontalDivider()
-    Spacer(modifier = Modifier.height(16.dp))
-
-    // === Gemini's FlowRow implementation ===
-    Text("Gemini — OrderActionFlowRow", modifier = Modifier.padding(bottom = 8.dp))
+    // === AdaptiveActionLayout demos ===
+    Text("AdaptiveActionLayout", modifier = Modifier.padding(bottom = 8.dp))
 
     OrderActionFlowRow(ratingText = "Rate order", buttonText = "Order again")
     Spacer(modifier = Modifier.height(8.dp))
